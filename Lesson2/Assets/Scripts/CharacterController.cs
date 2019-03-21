@@ -12,12 +12,15 @@ public class CharacterController : MonoBehaviour
     float groundRadius = 0.2f;
     public LayerMask whatIsGround;
     Animator anim;
+    public GameObject prefBullet;
+    public Transform GunPos;
 
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody2D>();
+        GunPos = transform.GetChild(1).transform;
     }
 
     // Update is called once per frame
@@ -29,10 +32,14 @@ public class CharacterController : MonoBehaviour
         anim.SetFloat("vSpeed",rigidBody.velocity.y);
         if (!isGrounded)
             return;
-        else if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+        else if (isGrounded && Input.GetKeyDown(KeyCode.UpArrow))
         {
             anim.SetBool("Ground",false);
             rigidBody.AddForce(new Vector2(0,500));
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Shoot();
         }
     }
 
@@ -54,5 +61,13 @@ public class CharacterController : MonoBehaviour
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    void Shoot()
+    {
+        GameObject temp = Instantiate(prefBullet,GunPos.position,Quaternion.identity);
+        temp.name = "bullet";
+        temp.GetComponent<Bullet>().direction = (isFasingRight) ? 1 : -1;
+        GetComponent<AudioSource>().Play();
     }
 }
