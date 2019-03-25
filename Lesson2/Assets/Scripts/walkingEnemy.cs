@@ -5,8 +5,20 @@ using UnityEngine;
 public class walkingEnemy : MonoBehaviour
 {
     public float speed = 7f;
-    public float speedRotate = -2f;
+    public float speedRotate;
     public int health = 2;
+    public Transform Player;
+    public Rigidbody2D _rigidbody;
+
+    private void Start()
+    {
+        if (GetComponent<Rigidbody2D>())
+        {
+            _rigidbody = GetComponent<Rigidbody2D>();
+        }
+        Player = GameObject.FindGameObjectWithTag("Player").transform;
+        speedRotate = -GetDirection().x*3f;
+    }
 
     // Start is called before the first frame update
     private void OnCollisionEnter2D(Collision2D collision)
@@ -18,6 +30,20 @@ public class walkingEnemy : MonoBehaviour
             transform.localScale = enemyScale;
             speedRotate *= -1;
         }
+        if (collision.gameObject.tag == "Player")
+        {
+            Transform PlTransform = collision.transform;
+            Rigidbody2D rg = PlTransform.GetComponent<Rigidbody2D>();
+            if (transform.position.x < PlTransform.position.x)
+            {
+                rg.AddForce(new Vector2(3, 3), ForceMode2D.Impulse);
+            }
+            else
+            {
+                rg.AddForce(new Vector2(-3, -3), ForceMode2D.Impulse);
+            }
+            PlTransform.GetComponent<CharacterController>().health--;
+        }
     }
 
     private void OnBecameInvisible()
@@ -25,13 +51,28 @@ public class walkingEnemy : MonoBehaviour
         Destroy(gameObject, 1f);
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        transform.Rotate(0,0, speedRotate);
-        GetComponent<Rigidbody2D>().velocity = new Vector2(transform.localScale.x * speed, GetComponent<Rigidbody2D>().velocity.y);
-        if(health<=0)
+        transform.Rotate(0, 0, speedRotate);
+        _rigidbody.velocity = new Vector2(GetDirection().x * transform.localScale.x * speed, _rigidbody.velocity.y);
+    }
+    private void Update()
+    {
+        if (health <= 0)
         {
             Destroy(gameObject);
+        }
+    }
+
+    Vector3 GetDirection()
+    {
+        if (transform.position.x < Player.position.x)
+        {
+            return Vector3.right;
+        }
+        else
+        {
+            return Vector3.left;
         }
     }
 }
