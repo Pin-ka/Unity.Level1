@@ -6,6 +6,19 @@ public class Bullet : MonoBehaviour
 {
     float speed = 0.3f;
     public int direction = 1;
+    bool playerBull;
+
+    private void Start()
+    {
+        if (gameObject.name == "bullet")
+        {
+            playerBull = true;
+        }
+        else
+        {
+            playerBull = false;
+        }
+    }
 
     private void OnBecameInvisible()
     {
@@ -19,16 +32,36 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (playerBull)
         {
-            GameObject temp = collision.gameObject;
-            temp.GetComponent<walkingEnemy>().health--;
-            Destroy(gameObject);
+            if (collision.gameObject.tag == "Enemy")
+            {
+                GameObject temp = collision.gameObject;
+                temp.GetComponent<walkingEnemy>().health--;
+                Destroy(gameObject);
+            }
+            else if (collision.gameObject.tag == "Spirit")
+            {
+                GameObject temp = collision.gameObject;
+                temp.GetComponent<SpiritEnemy>().health--;
+                Destroy(gameObject);
+            }
+            else if (collision.gameObject.tag != "Gun" && collision.gameObject.tag != "Player")
+            {
+                Destroy(gameObject);
+            }
         }
-        else if(collision.gameObject.tag != "Gun" && collision.gameObject.tag != "Player")
+        else
         {
-            Destroy(gameObject);
+            if (collision.gameObject.tag == "Player")
+            {
+                GameObject temp = collision.gameObject;
+                temp.GetComponent<CharacterController>().health--;
+                Destroy(gameObject);
+            }
+            
         }
-     
+
+        
     }
 }

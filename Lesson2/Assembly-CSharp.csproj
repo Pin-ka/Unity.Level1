@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\DieSpace.cs" />
     <Compile Include="Assets\Scripts\Mine.cs" />
     <Compile Include="Assets\Scripts\Spawner.cs" />
+    <Compile Include="Assets\Scripts\SpiritEnemy.cs" />
     <Compile Include="Assets\Scripts\walkingEnemy.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:/Unity/UnityProjects/Lesson2/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
