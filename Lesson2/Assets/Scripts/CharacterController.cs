@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CharacterController : MonoBehaviour
 {
@@ -13,7 +14,9 @@ public class CharacterController : MonoBehaviour
     public LayerMask whatIsGround;
     Animator anim;
     public GameObject prefBullet;
+    public GameObject prefMine;
     public Transform GunPos;
+    public int health;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +24,7 @@ public class CharacterController : MonoBehaviour
         anim = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody2D>();
         GunPos = transform.GetChild(1).transform;
+        health = 10;
     }
 
     // Update is called once per frame
@@ -28,18 +32,26 @@ public class CharacterController : MonoBehaviour
     {
         Run();
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
-        anim.SetBool("Ground",isGrounded);
-        anim.SetFloat("vSpeed",rigidBody.velocity.y);
+        anim.SetBool("Ground", isGrounded);
+        anim.SetFloat("vSpeed", rigidBody.velocity.y);
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Shoot();
+        }
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            GetMine();
+        }
         if (!isGrounded)
             return;
         else if (isGrounded && Input.GetKeyDown(KeyCode.UpArrow))
         {
-            anim.SetBool("Ground",false);
-            rigidBody.AddForce(new Vector2(0,500));
+            anim.SetBool("Ground", false);
+            rigidBody.AddForce(new Vector2(0, 500));
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (health <= 0)
         {
-            Shoot();
+            SceneManager.LoadScene(0);
         }
     }
 
@@ -65,9 +77,15 @@ public class CharacterController : MonoBehaviour
 
     void Shoot()
     {
-        GameObject temp = Instantiate(prefBullet,GunPos.position,Quaternion.identity);
+        GameObject temp = Instantiate(prefBullet, GunPos.position, Quaternion.identity);
         temp.name = "bullet";
         temp.GetComponent<Bullet>().direction = (isFasingRight) ? 1 : -1;
-        GetComponent<AudioSource>().Play();
+    }
+
+    void GetMine()
+    {
+        GameObject temp = Instantiate(prefMine, transform.position, Quaternion.identity);
+        temp.name = "mine";
+        temp.GetComponent<Mine>().direction = (isFasingRight) ? 1 : -1;
     }
 }
