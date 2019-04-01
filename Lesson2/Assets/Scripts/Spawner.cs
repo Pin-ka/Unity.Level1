@@ -23,7 +23,7 @@ public class Spawner : MonoBehaviour
     void Spawn()
     {
         CurrentPos = PlatformsT[Random.Range(0, PlatformsT.Length)].transform.position;
-        Vector3 temp = new Vector3(CurrentPos.x-1,CurrentPos.y+2,CurrentPos.z);
+        Vector3 temp = new Vector3(CurrentPos.x-0.5f,CurrentPos.y+2,CurrentPos.z);
         // Instantiate a random enemy.
         int enemyIndex = Random.Range(0, enemies.Length);
         Instantiate(enemies[enemyIndex], temp, transform.rotation);

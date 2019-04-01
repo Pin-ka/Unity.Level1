@@ -7,6 +7,7 @@ TagManager:
   - Wall
   - Enemy
   - Gun
+  - Spirit
   layers:
   - Default
   - TransparentFX
@@ -19,9 +20,9 @@ TagManager:
   - Ground
   - Player
   - Wall
-  - 
-  - 
-  - 
+  - Bullet
+  - Mine
+  - Spirit
   - 
   - 
   - 

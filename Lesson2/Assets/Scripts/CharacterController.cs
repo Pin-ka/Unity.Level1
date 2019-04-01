@@ -17,6 +17,14 @@ public class CharacterController : MonoBehaviour
     public GameObject prefMine;
     public Transform GunPos;
     public int health;
+    float GUIX;
+    float GUIY;
+    Camera MainCam;
+    float OffX=3.82f;
+    float OffY=0.33f;
+    float X;
+    float Y;
+    int CamSpeed = 100;
 
     // Start is called before the first frame update
     void Start()
@@ -25,11 +33,17 @@ public class CharacterController : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         GunPos = transform.GetChild(1).transform;
         health = 10;
+        MainCam = Camera.main;
     }
 
     // Update is called once per frame
     void Update()
     {
+        X = transform.position.x;
+        Y = transform.position.y;
+        MainCam.transform.position = Vector3.Lerp(MainCam.transform.position,new Vector3(X+OffX,Y+OffY,MainCam.transform.position.z),Time.deltaTime*CamSpeed);
+        GUIX = Camera.main.WorldToScreenPoint(transform.position).x;
+        GUIY = Camera.main.WorldToScreenPoint(transform.position).y;
         Run();
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
         anim.SetBool("Ground", isGrounded);
@@ -38,7 +52,7 @@ public class CharacterController : MonoBehaviour
         {
             Shoot();
         }
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             GetMine();
         }
@@ -53,6 +67,7 @@ public class CharacterController : MonoBehaviour
         {
             SceneManager.LoadScene(0);
         }
+       
     }
 
 
@@ -84,8 +99,13 @@ public class CharacterController : MonoBehaviour
 
     void GetMine()
     {
-        GameObject temp = Instantiate(prefMine, transform.position, Quaternion.identity);
+        GameObject temp = Instantiate(prefMine, GunPos.position, Quaternion.identity);
         temp.name = "mine";
         temp.GetComponent<Mine>().direction = (isFasingRight) ? 1 : -1;
+    }
+
+    private void OnGUI()
+    {
+        GUI.Box(new Rect(GUIX-10,Screen.height-GUIY-70,30,20),health.ToString());
     }
 }
